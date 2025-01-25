@@ -1,0 +1,55 @@
+# Our desired pipeline using only a Nix shell environment
+name: Check and build the Package (Nix)
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  formatting-check:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check .clang-format on src/
+      uses: jidicula/clang-format-action@v4.11.0
+      with:
+        clang-format-version: '14'
+        check-path: 'src'
+
+  check_nix:
+    name: Check Flake
+    runs-on: ubuntu-22.04
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          fail-mode: true
+
+  build_and_test_nix:
+    name: Test and Build Application
+    needs: check_nix
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-12]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Build Application
+        # nix build would also work here because `todos` is the default package
+        run: nix build 
