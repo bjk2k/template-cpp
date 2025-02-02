@@ -19,7 +19,7 @@ ninja
 Building with nix works with:
 
 ```shell
-nix build
+nix build ".?submodules=1#" -L
 ```
 
 In order to build and run tests there's a `<app-name>` package that can be used.
@@ -27,6 +27,7 @@ This sets `doCheck = true` and adds `-DENABLE_TESTING=ON`cmake flag.
 
 ```shell
 nix build .#<app-name> --print-build-logs
+nix build
 ```
 
 ## Project Customization

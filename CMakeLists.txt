@@ -10,7 +10,7 @@ project(
   LANGUAGES CXX # C CUDA
   DESCRIPTION "C++ application description.")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -20,10 +20,15 @@ include(InstallRequiredSystemLibraries)
 option(ENABLE_TESTING "Should unit tests be compiled." ON)
 
 set(${PROJECT_NAME}_SOURCES
-    src/main.cpp)
+    src/main.cpp
+)
+
+add_subdirectory(external/GSL)
+include_directories(external/GSL/include)
 
 set(${PROJECT_NAME}_INCLUDES
     # includes
+
 )
 
 add_executable(${PROJECT_NAME})
